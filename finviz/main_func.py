@@ -74,13 +74,27 @@ def get_news(ticker):
 
     get_page(ticker)
     page_parsed = STOCK_PAGE[ticker]
-    all_news = page_parsed.cssselect('table[id="news-table"]//tr')
-    all_dates = [row.text_content() for row in all_news.cssselect('td//text()')]
-    headlines = [row.xpath('td[class="tab-link-news"]//text()') for row in all_news]
-    providers = [row.xpath('td[class="tab-link-right"]//text()') for row in all_news]
-    urls = [row.xpath('a').get("href") for row in all_news]
+    all_news = page_parsed.cssselect('table[id="news-table"] tr')
+    all_dates = [row.xpath('td[1]//text()') for row in all_news]
+    headlines = [row.xpath('td[2]//text()') for row in all_news]
+    #providers = [row.xpath('td[class="tab-link-right"]//text()') for row in all_news]
+    #urls = [row.xpath('a') for row in all_news]
 
-    return list(zip(all_dates, headlines, providers, urls))
+    clean_dates = []
+
+    for x in all_dates:
+        y = x[0].replace('\xa0\xa0','')
+        if len(y)>10:
+            date = y.split(' ')[0]
+            clean_dates.append(y)
+            continue
+        clean_dates.append(f'{date} {y}')
+        
+    clean_dates
+
+    return list(zip(clean_dates, headlines))
+
+    #return list(zip(all_dates, headlines, providers, urls))
 
 def get_all_news():
     """
