@@ -75,10 +75,11 @@ def get_news(ticker):
     get_page(ticker)
     page_parsed = STOCK_PAGE[ticker]
     all_news = page_parsed.cssselect('a[class="tab-link-news"]')
+    all_dates = [row.text_content() for row in page_parsed.cssselect('td[class="nn-date"]')]
     headlines = [row.xpath("text()")[0] for row in all_news]
     urls = [row.get("href") for row in all_news]
 
-    return list(zip(headlines, urls))
+    return list(zip(all_dates, headlines, urls))
 
 
 def get_all_news():
